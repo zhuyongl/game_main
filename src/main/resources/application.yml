@@ -12,3 +12,13 @@ spring:
 
 mybatis:
   mapper-locations: classpath*:mapper/*Mapper.xml
+
+# 微信配置
+wechat:
+  appid: wx71102fa8c5a3720d
+  secret: f3f868f6a0120628c44846dbfc095b5f
+  # 微信云配置
+  cloud:
+    env-id: prod-8gmma0q69368ca1a
+    access-token-url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${wechat.appid}&secret=${wechat.secret}
+    upload-file-url: https://api.weixin.qq.com/tcb/uploadfile

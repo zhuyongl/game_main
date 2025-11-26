@@ -5,6 +5,7 @@ import com.tencent.wxcloudrun.common.ApiResponse;
 import com.tencent.wxcloudrun.exception.UserNotFoundException;
 import com.tencent.wxcloudrun.model.dto.PageRequest;
 import com.tencent.wxcloudrun.model.dto.UserRequest;
+import com.tencent.wxcloudrun.model.dto.WechatLoginRequest;
 import com.tencent.wxcloudrun.model.vo.UserVO;
 import com.tencent.wxcloudrun.service.UserService;
 import org.slf4j.Logger;
@@ -117,6 +118,34 @@ public class UserController {
 
         UserVO userVO = userService.updateUserAndReturnVO(id, request)
                 .orElseThrow(() -> new UserNotFoundException("用户ID: " + id + " 不存在"));
+        return ApiResponse.ok(userVO);
+    }
+
+    /**
+     * 微信登录
+     * @param request {@link WechatLoginRequest}
+     * @return API response json
+     */
+    @PostMapping("/wechat/login")
+    ApiResponse wechatLogin(@RequestBody WechatLoginRequest request) {
+        logger.info("/api/users/wechat/login post request");
+
+        UserVO userVO = userService.wechatLogin(request);
+        return ApiResponse.ok(userVO);
+    }
+
+    /**
+     * 根据微信OpenId更新用户信息
+     * @param wechatOpenId 微信OpenId
+     * @param request {@link UserRequest}
+     * @return API response json
+     */
+    @PutMapping("/wechat/{wechatOpenId}")
+    ApiResponse updateWechatUserInfo(@PathVariable String wechatOpenId, @RequestBody UserRequest request) {
+        logger.info("/api/users/wechat/{} put request", wechatOpenId);
+
+        UserVO userVO = userService.updateWechatUserInfo(wechatOpenId, request)
+                .orElseThrow(() -> new UserNotFoundException("微信OpenId: " + wechatOpenId + " 不存在的用户"));
         return ApiResponse.ok(userVO);
     }
 

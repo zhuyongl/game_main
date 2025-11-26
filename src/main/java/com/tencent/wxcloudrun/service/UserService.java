@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import com.github.pagehelper.PageInfo;
 import com.tencent.wxcloudrun.model.dto.UserRequest;
+import com.tencent.wxcloudrun.model.dto.WechatLoginRequest;
 import com.tencent.wxcloudrun.model.entity.User;
 import com.tencent.wxcloudrun.model.vo.UserVO;
 
@@ -37,6 +38,11 @@ public interface UserService {
   UserVO createUserAndReturnVO(UserRequest request);
   
   Optional<UserVO> updateUserAndReturnVO(Integer id, UserRequest request);
+  
+  // 微信登录相关方法
+  UserVO wechatLogin(WechatLoginRequest request);
+  
+  Optional<UserVO> updateWechatUserInfo(String wechatOpenId, UserRequest request);
 
   User createUser(User user);
 
