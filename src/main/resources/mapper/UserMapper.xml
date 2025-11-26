@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.wxcloudrun.mapper.UserMapper">
+
+    <resultMap id="userMapper" type="com.tencent.wxcloudrun.model.entity.User">
+        <id property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="email" column="email"/>
+        <result property="password" column="password"/>
+        <result property="nickname" column="nickname"/>
+        <result property="avatar" column="avatar"/>
+        <result property="userType" column="userType"/>
+        <result property="wechatOpenId" column="wechatOpenId"/>
+        <result property="createdAt" column="createdAt" javaType="java.time.LocalDateTime" />
+        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"  />
+    </resultMap>
+
+    <select id="getUser" resultMap="userMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `username`, `email`, `password`, `nickname`, `avatar`, `userType`, `wechatOpenId`, `createdAt`, `updatedAt`
+        FROM Users
+        WHERE id = #{id}
+    </select>
+
+    <select id="getUserByUsername" resultMap="userMapper" parameterType="java.lang.String">
+        SELECT `id`, `username`, `email`, `password`, `nickname`, `avatar`, `userType`, `wechatOpenId`, `createdAt`, `updatedAt`
+        FROM Users
+        WHERE username = #{username}
+    </select>
+
+    <select id="getUserByEmail" resultMap="userMapper" parameterType="java.lang.String">
+        SELECT `id`, `username`, `email`, `password`, `nickname`, `avatar`, `userType`, `wechatOpenId`, `createdAt`, `updatedAt`
+        FROM Users
+        WHERE email = #{email}
+    </select>
+
+    <select id="getUserByWechatOpenId" resultMap="userMapper" parameterType="java.lang.String">
+        SELECT `id`, `username`, `email`, `password`, `nickname`, `avatar`, `userType`, `wechatOpenId`, `createdAt`, `updatedAt`
+        FROM Users
+        WHERE wechatOpenId = #{wechatOpenId}
+    </select>
+
+    <select id="getAllUsers" resultMap="userMapper">
+        SELECT `id`, `username`, `email`, `password`, `nickname`, `avatar`, `userType`, `wechatOpenId`, `createdAt`, `updatedAt`
+        FROM Users
+    </select>
+
+    <select id="getAllUsersWithPagination" resultMap="userMapper">
+        SELECT `id`, `username`, `email`, `password`, `nickname`, `avatar`, `userType`, `wechatOpenId`, `createdAt`, `updatedAt`
+        FROM Users
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="getTotalUsersCount" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM Users
+    </select>
+
+    <insert id="insertUser" parameterType="com.tencent.wxcloudrun.model.entity.User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `Users`(`username`, `email`, `password`, `nickname`, `avatar`, `userType`, `wechatOpenId`)
+        VALUES(#{username}, #{email}, #{password}, #{nickname}, #{avatar}, #{userType}, #{wechatOpenId})
+    </insert>
+
+    <update id="updateUser" parameterType="com.tencent.wxcloudrun.model.entity.User">
+        UPDATE `Users`
+        SET 
+            username = #{username},
+            email = #{email},
+            password = #{password},
+            nickname = #{nickname},
+            avatar = #{avatar},
+            userType = #{userType},
+            wechatOpenId = #{wechatOpenId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="java.lang.Integer">
+        DELETE
+        FROM Users
+        WHERE id = #{id}
+    </delete>
+
+</mapper>

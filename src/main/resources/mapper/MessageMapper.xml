@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tencent.wxcloudrun.mapper.MessageMapper">
+
+    <resultMap id="messageMapper" type="com.tencent.wxcloudrun.model.entity.Message">
+        <id property="id" column="id"/>
+        <result property="userId" column="userId"/>
+        <result property="content" column="content"/>
+        <result property="createdAt" column="createdAt" javaType="java.time.LocalDateTime" />
+        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"  />
+    </resultMap>
+
+    <select id="getMessage" resultMap="messageMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        FROM Messages
+        WHERE id = #{id}
+    </select>
+
+    <select id="getAllMessages" resultMap="messageMapper">
+        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        FROM Messages
+        ORDER BY createdAt DESC
+    </select>
+
+    <select id="getAllMessagesWithPagination" resultMap="messageMapper">
+        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        FROM Messages
+        ORDER BY createdAt DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="getTotalMessagesCount" resultType="java.lang.Long">
+        SELECT COUNT(*) FROM Messages
+    </select>
+
+    <select id="getMessagesByUserId" resultMap="messageMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        FROM Messages
+        WHERE userId = #{userId}
+        ORDER BY createdAt DESC
+    </select>
+
+    <select id="getMessagesByUserIdWithPagination" resultMap="messageMapper">
+        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        FROM Messages
+        WHERE userId = #{userId}
+        ORDER BY createdAt DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+
+    <select id="getMessagesCountByUserId" resultType="java.lang.Long" parameterType="java.lang.Integer">
+        SELECT COUNT(*) FROM Messages WHERE userId = #{userId}
+    </select>
+
+    <insert id="insertMessage" parameterType="com.tencent.wxcloudrun.model.entity.Message" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO `Messages`(`userId`, `content`)
+        VALUES(#{userId}, #{content})
+    </insert>
+
+    <update id="updateMessage" parameterType="com.tencent.wxcloudrun.model.entity.Message">
+        UPDATE `Messages`
+        SET 
+            content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteMessage" parameterType="java.lang.Integer">
+        DELETE
+        FROM Messages
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteMessagesByUserId" parameterType="java.lang.Integer">
+        DELETE
+        FROM Messages
+        WHERE userId = #{userId}
+    </delete>
+
+</mapper>
