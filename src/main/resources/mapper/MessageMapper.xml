@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.tencent.wxcloudrun.mapper.MessageMapper">
+<mapper namespace="icu.xindongxuanxiang.game.mapper.MessageMapper">
 
-    <resultMap id="messageMapper" type="com.tencent.wxcloudrun.model.entity.Message">
+    <resultMap id="messageMapper" type="icu.xindongxuanxiang.game.model.entity.Message">
         <id property="id" column="id"/>
         <result property="userId" column="userId"/>
         <result property="content" column="content"/>
@@ -52,12 +52,12 @@
         SELECT COUNT(*) FROM Messages WHERE userId = #{userId}
     </select>
 
-    <insert id="insertMessage" parameterType="com.tencent.wxcloudrun.model.entity.Message" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insertMessage" parameterType="icu.xindongxuanxiang.game.model.entity.Message" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO `Messages`(`userId`, `content`)
         VALUES(#{userId}, #{content})
     </insert>
 
-    <update id="updateMessage" parameterType="com.tencent.wxcloudrun.model.entity.Message">
+    <update id="updateMessage" parameterType="icu.xindongxuanxiang.game.model.entity.Message">
         UPDATE `Messages`
         SET 
             content = #{content}

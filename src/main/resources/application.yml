@@ -1,10 +1,11 @@
 server:
-  port: 80
-
+  port: 8888
+  servlet:
+    context-path: /api
 
 spring:
   profiles:
-    active: prod
+    active: test
   mvc:
     view:
       suffix: .html
