@@ -54,7 +54,7 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public PageInfo<Message> getMessagesWithPagination(Integer page, Integer size) {
         PageHelper.startPage(page, size);
-        List<Message> messages = messageMapper.getAllMessages();
+        List<Message> messages = messageMapper.getAllMessagesAdmin();
         return new PageInfo<>(messages);
     }
 
@@ -248,5 +248,15 @@ public class MessageServiceImpl implements MessageService {
         }
 
         return messageVO;
+    }
+
+    @Override
+    public void updateMessageTopStatus(Integer id, Boolean top) {
+        Message message = messageMapper.getMessageRaw(id);
+        if (message == null) {
+            throw new MessageNotFoundException("留言ID: " + id + " 不存在");
+        }
+        message.setTop(top);
+        messageMapper.updateMessage(message);
     }
 }

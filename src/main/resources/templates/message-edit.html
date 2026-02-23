@@ -42,6 +42,30 @@
     <div class="card border-0 shadow-sm">
         <div class="card-body">
             <form th:action="@{'/admin/messages/' + ${message.id} + '/edit'}" method="post">
+                <!-- 置顶状态 -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-pin-angle me-1"></i>置顶状态
+                        <small class="text-muted ms-2">(设置留言是否置顶显示)</small>
+                    </label>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" name="top" id="topSwitch"
+                               th:checked="${message.top}">
+                        <label class="form-check-label" for="topSwitch">
+                            <span th:if="${message.top}" class="text-warning fw-medium">
+                                <i class="bi bi-pin-angle-fill me-1"></i>当前已置顶
+                            </span>
+                            <span th:unless="${message.top}" class="text-muted">
+                                当前未置顶
+                            </span>
+                        </label>
+                    </div>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        置顶的留言将在列表中优先显示
+                    </div>
+                </div>
+
                 <!-- 留言内容 -->
                 <div class="mb-4">
                     <label for="content" class="form-label fw-semibold">
@@ -111,7 +135,7 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <!-- 操作按钮 -->
                 <div class="d-flex justify-content-between align-items-center pt-3 border-top">
                     <div class="text-muted small">

@@ -40,23 +40,7 @@
         SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
         FROM Messages
         WHERE isDeleted = 0
-        ORDER BY createdAt DESC
-    </select>
-
-    <select id="getAllMessagesWithPagination" resultMap="messageMapper">
-        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
-        FROM Messages
-        WHERE isDeleted = 0
-          AND reviewStatus = 'APPROVED'
         ORDER BY isTop DESC, createdAt DESC
-        LIMIT #{offset}, #{limit}
-    </select>
-
-    <select id="getTotalMessagesCount" resultType="java.lang.Long">
-        SELECT COUNT(*)
-        FROM Messages
-        WHERE isDeleted = 0
-          AND reviewStatus = 'APPROVED'
     </select>
 
     <select id="getMessagesByUserId" resultMap="messageMapper" parameterType="java.lang.Integer">
@@ -66,24 +50,6 @@
           AND isDeleted = 0
           AND reviewStatus = 'APPROVED'
         ORDER BY isTop DESC, createdAt DESC
-    </select>
-
-    <select id="getMessagesByUserIdWithPagination" resultMap="messageMapper">
-        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
-        FROM Messages
-        WHERE userId = #{userId}
-          AND isDeleted = 0
-          AND reviewStatus = 'APPROVED'
-        ORDER BY isTop DESC, createdAt DESC
-        LIMIT #{offset}, #{limit}
-    </select>
-
-    <select id="getMessagesCountByUserId" resultType="java.lang.Long" parameterType="java.lang.Integer">
-        SELECT COUNT(*)
-        FROM Messages
-        WHERE userId = #{userId}
-          AND isDeleted = 0
-          AND reviewStatus = 'APPROVED'
     </select>
 
     <select id="getMessagesByReviewStatus" resultMap="messageMapper" parameterType="java.lang.String">
@@ -103,7 +69,8 @@
         UPDATE `Messages`
         SET
             content = #{content},
-            isTop = #{top}
+            isTop = #{top},
+            reviewStatus = #{reviewStatus}
         WHERE id = #{id}
     </update>
 

@@ -51,6 +51,8 @@ public interface MessageService {
 
     void updateMessageReviewStatus(Integer id, String reviewStatus);
 
+    void updateMessageTopStatus(Integer id, Boolean top);
+
     MessageVO convertToVO(Message message);
 
     MessageVO convertToVO(Message message, User user);

@@ -110,8 +110,18 @@ public class MessageReviewController {
     @PostMapping("/{id}/edit")
     public String update(@PathVariable Integer id,
                          @RequestParam("content") String content,
-                         @RequestParam("reviewStatus") String reviewStatus) {
-        messageService.updateMessageContentAndStatus(id, content, reviewStatus);
+                         @RequestParam("reviewStatus") String reviewStatus,
+                         @RequestParam(value = "top", required = false) Boolean top) {
+        Message message = messageService.getMessageRaw(id)
+                .orElseThrow(() -> new MessageNotFoundException("留言ID: " + id + " 不存在"));
+        
+        message.setContent(content);
+        message.setReviewStatus(reviewStatus);
+        if (top != null) {
+            message.setTop(top);
+        }
+        
+        messageService.updateMessage(message);
         return "redirect:/admin/messages";
     }
 
@@ -144,5 +154,19 @@ public class MessageReviewController {
     public String delete(@PathVariable Integer id) {
         messageService.deleteMessage(id);
         return "redirect:/admin/messages";
+    }
+
+    @PostMapping("/{id}/toggle-top")
+    @ResponseBody
+    public ApiResponse toggleTop(@PathVariable Integer id,
+                                 @RequestBody Map<String, Object> requestBody) {
+        try {
+            Boolean top = (Boolean) requestBody.get("top");
+            messageService.updateMessageTopStatus(id, top);
+            String message = top ? "设置置顶成功" : "取消置顶成功";
+            return ApiResponse.ok(message);
+        } catch (Exception e) {
+            return ApiResponse.error("操作失败：" + e.getMessage());
+        }
     }
 }

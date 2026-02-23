@@ -63,6 +63,9 @@
                         <th class="border-0" style="width: 120px;">
                             <i class="bi bi-flag me-1"></i>状态
                         </th>
+                        <th class="border-0" style="width: 100px;">
+                            <i class="bi bi-pin-angle me-1"></i>置顶
+                        </th>
                         <th class="border-0" style="width: 180px;">
                             <i class="bi bi-clock-history me-1"></i>创建时间
                         </th>
@@ -100,6 +103,19 @@
                                   class="badge bg-danger">
                 <i class="bi bi-x-circle me-1"></i>未通过
               </span>
+                        </td>
+                        <td class="text-center">
+                            <button type="button"
+                                    class="btn btn-sm"
+                                    th:classappend="${msg.top ? 'btn-warning' : 'btn-outline-secondary'}"
+                                    th:attr="onclick='toggleTop(' + ${msg.id} + ', ' + (!${msg.top}) + ')'"
+                                    th:title="${msg.top ? '取消置顶' : '设为置顶'}">
+                                <i class="bi"
+                                   th:classappend="${msg.top ? 'bi-pin-angle-fill' : 'bi-pin-angle'}"
+                                   th:style="${msg.top ? 'color: #ffc107;' : ''}"></i>
+                                <span th:if="${msg.top}" class="ms-1 small">是</span>
+                                <span th:unless="${msg.top}" class="ms-1 small">否</span>
+                            </button>
                         </td>
                         <td class="text-muted small" th:text="${#temporals.format(msg.createdAt, 'MM-dd HH:mm')}"></td>
                         <td class="text-center">
@@ -268,5 +284,62 @@
         border-color: #dee2e6;
     }
 </style>
+<script>
+    function toggleTop(messageId, newTopStatus) {
+
+        fetch(`/api/admin/messages/${messageId}/toggle-top`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                top: newTopStatus
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code === 0) {
+                    // 成功，刷新页面或更新UI
+                    showNotification(data.data || '操作成功', 'success');
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    showNotification(data.errorMsg || '操作失败', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showNotification('网络错误，请重试', 'error');
+            });
+    }
+
+    function showNotification(message, type) {
+        // 移除旧的通知
+        let existingAlert = document.querySelector('.alert-notification');
+        if (existingAlert) {
+            existingAlert.remove();
+        }
+
+        // 创建通知元素
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type === 'success' ? 'success' : 'danger'} alert-dismissible fade show fixed-top mx-3 mt-3 alert-notification`;
+        alertDiv.style.zIndex = '9999';
+        alertDiv.innerHTML = `
+            <strong>${message}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+
+        // 添加到页面顶部
+        document.body.insertBefore(alertDiv, document.body.firstChild);
+
+        // 自动移除通知
+        setTimeout(() => {
+            if (alertDiv.parentNode) {
+                alertDiv.remove();
+            }
+        }, 3000);
+    }
+</script>
 </body>
 </html>
