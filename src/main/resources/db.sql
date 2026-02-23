@@ -21,10 +21,14 @@ CREATE TABLE `Messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `userId` int(11) NOT NULL,
   `content` text NOT NULL,
+  `isDeleted` tinyint(1) NOT NULL DEFAULT 0,
+  `isTop` tinyint(1) NOT NULL DEFAULT 0,
+  `reviewStatus` enum('PENDING','APPROVED','REJECTED') NOT NULL DEFAULT 'PENDING',
   `createdAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updatedAt` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   FOREIGN KEY (`userId`) REFERENCES `Users`(`id`) ON DELETE CASCADE,
   INDEX `idx_user_id` (`userId`),
-  INDEX `idx_created_at` (`createdAt`)
+  INDEX `idx_created_at` (`createdAt`),
+  INDEX `idx_review_status` (`reviewStatus`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

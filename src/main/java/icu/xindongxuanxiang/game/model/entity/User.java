@@ -1,29 +1,30 @@
 package icu.xindongxuanxiang.game.model.entity;
 
 import lombok.Data;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Data
 public class User implements Serializable {
 
-  private Integer id;
+    private Integer id;
 
-  private String username;
+    private String username;
 
-  private String email;
+    private String email;
 
-  private String password;
+    private String password;
 
-  private String nickname;
+    private String nickname;
 
-  private String avatar;
+    private String avatar;
 
-  private String userType;
+    private String userType;
 
-  private String wechatOpenId;
+    private String wechatOpenId;
 
-  private LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-  private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }

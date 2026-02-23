@@ -6,74 +6,124 @@
         <id property="id" column="id"/>
         <result property="userId" column="userId"/>
         <result property="content" column="content"/>
-        <result property="createdAt" column="createdAt" javaType="java.time.LocalDateTime" />
-        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"  />
+        <result property="deleted" column="isDeleted"/>
+        <result property="top" column="isTop"/>
+        <result property="reviewStatus" column="reviewStatus"/>
+        <result property="createdAt" column="createdAt" javaType="java.time.LocalDateTime"/>
+        <result property="updatedAt" column="updatedAt" javaType="java.time.LocalDateTime"/>
     </resultMap>
 
     <select id="getMessage" resultMap="messageMapper" parameterType="java.lang.Integer">
-        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
         FROM Messages
         WHERE id = #{id}
+          AND isDeleted = 0
+          AND reviewStatus = 'APPROVED'
+    </select>
+
+    <select id="getMessageRaw" resultMap="messageMapper" parameterType="java.lang.Integer">
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
+        FROM Messages
+        WHERE id = #{id}
+          AND isDeleted = 0
     </select>
 
     <select id="getAllMessages" resultMap="messageMapper">
-        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
         FROM Messages
+        WHERE isDeleted = 0
+          AND reviewStatus = 'APPROVED'
+        ORDER BY isTop DESC, createdAt DESC
+    </select>
+
+    <select id="getAllMessagesAdmin" resultMap="messageMapper">
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
+        FROM Messages
+        WHERE isDeleted = 0
         ORDER BY createdAt DESC
     </select>
 
     <select id="getAllMessagesWithPagination" resultMap="messageMapper">
-        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
         FROM Messages
-        ORDER BY createdAt DESC
+        WHERE isDeleted = 0
+          AND reviewStatus = 'APPROVED'
+        ORDER BY isTop DESC, createdAt DESC
         LIMIT #{offset}, #{limit}
     </select>
 
     <select id="getTotalMessagesCount" resultType="java.lang.Long">
-        SELECT COUNT(*) FROM Messages
+        SELECT COUNT(*)
+        FROM Messages
+        WHERE isDeleted = 0
+          AND reviewStatus = 'APPROVED'
     </select>
 
     <select id="getMessagesByUserId" resultMap="messageMapper" parameterType="java.lang.Integer">
-        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
         FROM Messages
         WHERE userId = #{userId}
-        ORDER BY createdAt DESC
+          AND isDeleted = 0
+          AND reviewStatus = 'APPROVED'
+        ORDER BY isTop DESC, createdAt DESC
     </select>
 
     <select id="getMessagesByUserIdWithPagination" resultMap="messageMapper">
-        SELECT `id`, `userId`, `content`, `createdAt`, `updatedAt`
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
         FROM Messages
         WHERE userId = #{userId}
-        ORDER BY createdAt DESC
+          AND isDeleted = 0
+          AND reviewStatus = 'APPROVED'
+        ORDER BY isTop DESC, createdAt DESC
         LIMIT #{offset}, #{limit}
     </select>
 
     <select id="getMessagesCountByUserId" resultType="java.lang.Long" parameterType="java.lang.Integer">
-        SELECT COUNT(*) FROM Messages WHERE userId = #{userId}
+        SELECT COUNT(*)
+        FROM Messages
+        WHERE userId = #{userId}
+          AND isDeleted = 0
+          AND reviewStatus = 'APPROVED'
+    </select>
+
+    <select id="getMessagesByReviewStatus" resultMap="messageMapper" parameterType="java.lang.String">
+        SELECT `id`, `userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`, `createdAt`, `updatedAt`
+        FROM Messages
+        WHERE isDeleted = 0
+          AND reviewStatus = #{reviewStatus}
+        ORDER BY createdAt DESC
     </select>
 
     <insert id="insertMessage" parameterType="icu.xindongxuanxiang.game.model.entity.Message" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO `Messages`(`userId`, `content`)
-        VALUES(#{userId}, #{content})
+        INSERT INTO `Messages`(`userId`, `content`, `isDeleted`, `isTop`, `reviewStatus`)
+        VALUES(#{userId}, #{content}, 0, 0, 'PENDING')
     </insert>
 
     <update id="updateMessage" parameterType="icu.xindongxuanxiang.game.model.entity.Message">
         UPDATE `Messages`
-        SET 
-            content = #{content}
+        SET
+            content = #{content},
+            isTop = #{top}
         WHERE id = #{id}
     </update>
 
-    <delete id="deleteMessage" parameterType="java.lang.Integer">
-        DELETE
-        FROM Messages
+    <update id="deleteMessage" parameterType="java.lang.Integer">
+        UPDATE Messages
+        SET isDeleted = 1
         WHERE id = #{id}
-    </delete>
+    </update>
 
-    <delete id="deleteMessagesByUserId" parameterType="java.lang.Integer">
-        DELETE
-        FROM Messages
+    <update id="deleteMessagesByUserId" parameterType="java.lang.Integer">
+        UPDATE Messages
+        SET isDeleted = 1
         WHERE userId = #{userId}
-    </delete>
+    </update>
+
+    <update id="updateMessageReviewStatus">
+        UPDATE Messages
+        SET reviewStatus = #{reviewStatus}
+        WHERE id = #{id}
+          AND isDeleted = 0
+    </update>
 
 </mapper>

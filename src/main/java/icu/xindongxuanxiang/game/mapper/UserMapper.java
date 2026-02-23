@@ -10,19 +10,19 @@ import java.util.List;
 @Mapper
 public interface UserMapper {
 
-  User getUser(@Param("id") Integer id);
+    User getUser(@Param("id") Integer id);
 
-  User getUserByUsername(@Param("username") String username);
+    User getUserByUsername(@Param("username") String username);
 
-  User getUserByEmail(@Param("email") String email);
+    User getUserByEmail(@Param("email") String email);
 
-  User getUserByWechatOpenId(@Param("wechatOpenId") String wechatOpenId);
+    User getUserByWechatOpenId(@Param("wechatOpenId") String wechatOpenId);
 
-  List<User> getAllUsers();
+    List<User> getAllUsers();
 
-  void insertUser(User user);
+    void insertUser(User user);
 
-  void updateUser(User user);
+    void updateUser(User user);
 
-  void deleteUser(@Param("id") Integer id);
+    void deleteUser(@Param("id") Integer id);
 }

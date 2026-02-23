@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${pageTitle} ?: '心动选项管理后台'">心动选项管理后台</title>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/bootstrap-icons.css}">
+    <style>
+        body, html {
+            height: 100%;
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .layout-root {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .layout-main {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+        }
+
+        .layout-sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #ff6b81 0%, #ff8e9e 100%);
+            border-right: none;
+            padding-top: 2rem;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .layout-content {
+            flex: 1;
+            padding: 2rem;
+            overflow: auto;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .layout-footer {
+            border-top: 1px solid rgba(255, 107, 129, 0.2);
+            padding: 1rem 2rem;
+            font-size: 0.875rem;
+            color: #6c757d;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .sidebar-link {
+            display: block;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border-radius: 0 25px 25px 0;
+            margin: 0.25rem 0;
+            position: relative;
+            font-weight: 500;
+        }
+
+        .sidebar-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .sidebar-link.active {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar-link i {
+            margin-right: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .navbar-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-bottom: none;
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-brand i {
+            margin-right: 0.5rem;
+            color: #ff6b81;
+        }
+
+        .user-info {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            transition: all 0.3s ease;
+            border-radius: 20px;
+            padding: 0.375rem 1rem;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 107, 129, 0.8);
+            border-color: #ff6b81;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .sidebar-header {
+            color: white;
+            text-align: center;
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 1.5rem;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .heart-icon {
+            color: white;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+
+        /* 模态框内容区域能正常交互 */
+        .modal-body {
+            pointer-events: auto;
+        }
+
+        /* 确保单选按钮可点击 */
+        .btn-check {
+            pointer-events: none;
+        }
+
+        .modal {
+            z-index: 1055 !important;
+        }
+
+        .modal-content {
+            pointer-events: auto !important;
+        }
+    </style>
+</head>
+<body>
+<div class="layout-root">
+    <header class="navbar navbar-dark navbar-custom">
+        <div class="container-fluid">
+      <span class="navbar-brand">
+        <i class="bi bi-heart-fill"></i>
+        心动选项管理后台
+      </span>
+            <div class="d-flex align-items-center">
+        <span class="user-info me-3">
+          <i class="bi bi-person-circle me-1"></i>
+          <span th:text="${adminUser != null ? adminUser.username : '管理员'}"></span>
+        </span>
+                <a th:href="@{/admin/logout}" class="btn btn-sm btn-logout">
+                    <i class="bi bi-box-arrow-right me-1"></i>退出
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout-main">
+        <aside class="layout-sidebar">
+            <div class="sidebar-header">
+                <div class="heart-icon">
+                    <i class="bi bi-heart-fill" style="font-size: 2rem;"></i>
+                </div>
+                <h5 class="sidebar-title">管理中心</h5>
+                <p class="sidebar-subtitle">欢迎回来，管理员</p>
+            </div>
+            <nav class="nav flex-column">
+                <a th:href="@{/admin/messages}" class="sidebar-link"
+                   th:classappend="${activeMenu == 'messages'} ? ' active' : ''">
+                    <i class="bi bi-chat-dots-fill"></i>留言管理
+                </a>
+                <a th:href="@{/admin/users}" class="sidebar-link"
+                   th:classappend="${activeMenu == 'users'} ? ' active' : ''">
+                    <i class="bi bi-people-fill"></i>用户管理
+                </a>
+            </nav>
+        </aside>
+
+        <main class="layout-content">
+            <div class="content-card">
+                <div th:replace="${contentTemplate} :: content"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 审核模态框 -->
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-gradient"
+                     style="background: linear-gradient(135deg, #ff6b81 0%, #ff8e9e 100%);">
+                    <h5 class="modal-title text-white" id="reviewModalLabel">
+                        <i class="bi bi-eye-fill me-2"></i>留言审核
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm" method="post">
+                        <input type="hidden" id="messageId" name="id">
+
+                        <!-- 用户信息 -->
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">发布用户</label>
+                            <div class="fw-medium" id="userInfo">
+                                <i class="bi bi-person-circle me-2 text-primary"></i>
+                                <span id="userName"></span>
+                            </div>
+                        </div>
+
+                        <!-- 留言内容 -->
+                        <div class="mb-4">
+                            <label for="messageContent" class="form-label">
+                                <i class="bi bi-chat-text me-1"></i>留言内容
+                            </label>
+                            <textarea class="form-control" id="messageContent" name="content" rows="4"
+                                      placeholder="请输入留言内容..." required></textarea>
+                            <div class="form-text text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                您可以编辑留言内容后再进行审核
+                            </div>
+                        </div>
+
+                        <!-- 审核操作 -->
+                        <div class="mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-gavel me-1"></i>审核操作
+                            </label>
+                            <div class="btn-group w-100" role="group">
+                                <input type="radio" class="btn-check" name="reviewStatus" id="approve" value="APPROVED"
+                                       required>
+                                <label class="btn btn-outline-success" for="approve">
+                                    <i class="bi bi-check-circle me-1"></i>通过
+                                </label>
+
+                                <input type="radio" class="btn-check" name="reviewStatus" id="reject" value="REJECTED">
+                                <label class="btn btn-outline-danger" for="reject">
+                                    <i class="bi bi-x-circle me-1"></i>不通过
+                                </label>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-lg me-1"></i>取消
+                    </button>
+                    <button type="submit" form="reviewForm" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>确认审核
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="layout-footer text-end">
+        <span>© 2026 心动选项 · 用心制作每一份感动</span>
+    </footer>
+</div>
+<script th:src="@{/js/bootstrap.bundle.min.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('DOM加载完成，初始化模态框事件...');
+
+        const reviewModal = document.getElementById('reviewModal');
+        const reviewForm = document.getElementById('reviewForm');
+
+        if (!reviewModal || !reviewForm) {
+            console.error('错误：找不到必要元素');
+            return;
+        }
+
+        // 初始化Bootstrap模态框
+        const modal = new bootstrap.Modal(reviewModal);
+
+        // 模态框显示事件 - 填充数据
+        reviewModal.addEventListener('show.bs.modal', function (event) {
+            console.log('模态框show.bs.modal事件触发');
+
+            const button = event.relatedTarget;
+            if (!button) {
+                console.error('错误：无法获取relatedTarget');
+                return;
+            }
+
+            const messageId = button.getAttribute('data-id');
+            const messageContent = button.getAttribute('data-content');
+            const userName = button.getAttribute('data-user');
+
+            console.log('获取到的数据:', {messageId, messageContent, userName});
+
+            if (messageId) {
+                document.getElementById('messageId').value = messageId;
+                document.getElementById('messageContent').value = messageContent || '';
+                document.getElementById('userName').textContent = userName || '未知用户';
+
+                // 重置审核状态
+                document.getElementById('approve').checked = false;
+                document.getElementById('reject').checked = false;
+            }
+        });
+
+        // 表单绑定 submit 事件
+        reviewForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            console.log('表单提交事件触发');
+
+            const messageId = document.getElementById('messageId').value;
+            const content = document.getElementById('messageContent').value;
+            const reviewStatus = document.querySelector('input[name="reviewStatus"]:checked');
+
+            if (!reviewStatus) {
+                alert('请选择审核操作：通过或不通过');
+                return;
+            }
+
+            console.log('提交审核:', {
+                id: messageId,
+                content: content,
+                reviewStatus: reviewStatus.value
+            });
+
+            const formData = new FormData();
+            formData.append('id', messageId);
+            formData.append('content', content);
+            formData.append('reviewStatus', reviewStatus.value);
+
+            fetch('/api/admin/messages/' + messageId + '/review', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('响应:', data);
+                    if (data.code === 0) {
+                        modal.hide();
+                        window.location.reload();
+                    } else {
+                        alert(data.errorMsg || '审核操作失败，请重试');
+                    }
+                })
+                .catch(error => {
+                    console.error('审核请求错误:', error);
+                    alert('审核操作失败，请重试');
+                });
+        });
+
+        // 通过/不通过按钮点击效果（仅视觉反馈，不提交）
+        reviewModal.addEventListener('click', function (e) {
+            const approveLabel = e.target.closest('label[for="approve"]');
+            const rejectLabel = e.target.closest('label[for="reject"]');
+
+            if (approveLabel) {
+                document.getElementById('approve').checked = true;
+                console.log('选择了通过');
+            }
+
+            if (rejectLabel) {
+                document.getElementById('reject').checked = true;
+                console.log('选择了不通过');
+            }
+        });
+    });
+</script>
+</body>
+</html>
+

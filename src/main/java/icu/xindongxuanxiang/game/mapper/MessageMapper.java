@@ -10,17 +10,25 @@ import java.util.List;
 @Mapper
 public interface MessageMapper {
 
-  Message getMessage(@Param("id") Integer id);
+    Message getMessage(@Param("id") Integer id);
 
-  List<Message> getAllMessages();
+    Message getMessageRaw(@Param("id") Integer id);
 
-  List<Message> getMessagesByUserId(@Param("userId") Integer userId);
+    List<Message> getAllMessages();
 
-  void insertMessage(Message message);
+    List<Message> getAllMessagesAdmin();
 
-  void updateMessage(Message message);
+    List<Message> getMessagesByUserId(@Param("userId") Integer userId);
 
-  void deleteMessage(@Param("id") Integer id);
+    List<Message> getMessagesByReviewStatus(@Param("reviewStatus") String reviewStatus);
 
-  void deleteMessagesByUserId(@Param("userId") Integer userId);
+    void insertMessage(Message message);
+
+    void updateMessage(Message message);
+
+    void deleteMessage(@Param("id") Integer id);
+
+    void deleteMessagesByUserId(@Param("userId") Integer userId);
+
+    void updateMessageReviewStatus(@Param("id") Integer id, @Param("reviewStatus") String reviewStatus);
 }

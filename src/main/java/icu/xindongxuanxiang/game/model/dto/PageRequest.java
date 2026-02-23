@@ -6,9 +6,9 @@ import lombok.Data;
 public class PageRequest {
 
     private Integer page = 1;
-    
+
     private Integer size = 10;
-    
+
     public void setPage(Integer page) {
         if (page == null || page < 1) {
             this.page = 1;
@@ -16,7 +16,7 @@ public class PageRequest {
             this.page = page;
         }
     }
-    
+
     public void setSize(Integer size) {
         if (size == null || size < 1) {
             this.size = 10;

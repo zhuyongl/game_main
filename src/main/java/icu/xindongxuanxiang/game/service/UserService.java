@@ -12,43 +12,43 @@ import java.util.List;
 
 public interface UserService {
 
-  Optional<User> getUser(Integer id);
+    Optional<User> getUser(Integer id);
 
-  Optional<User> getUserByUsername(String username);
+    Optional<User> getUserByUsername(String username);
 
-  Optional<User> getUserByEmail(String email);
+    Optional<User> getUserByEmail(String email);
 
-  Optional<User> getUserByWechatOpenId(String wechatOpenId);
+    Optional<User> getUserByWechatOpenId(String wechatOpenId);
 
-  List<User> getAllUsers();
+    List<User> getAllUsers();
 
-  PageInfo<User> getUsersWithPagination(Integer page, Integer size);
-  
-  PageInfo<UserVO> getUsersVOWithPagination(Integer page, Integer size);
-  
-  // 新增的VO相关方法
-  Optional<UserVO> getUserVOById(Integer id);
-  
-  Optional<UserVO> getUserVOByUsername(String username);
-  
-  Optional<UserVO> getUserVOByEmail(String email);
-  
-  Optional<UserVO> getUserVOByWechatOpenId(String wechatOpenId);
-  
-  UserVO createUserAndReturnVO(UserRequest request);
-  
-  Optional<UserVO> updateUserAndReturnVO(Integer id, UserRequest request);
-  
-  // 微信登录相关方法
-  UserVO wechatLogin(WechatLoginRequest request);
-  
-  Optional<UserVO> updateWechatUserInfo(String wechatOpenId, UserRequest request);
+    PageInfo<User> getUsersWithPagination(Integer page, Integer size);
 
-  User createUser(User user);
+    PageInfo<UserVO> getUsersVOWithPagination(Integer page, Integer size);
 
-  User updateUser(User user);
+    // 新增的VO相关方法
+    Optional<UserVO> getUserVOById(Integer id);
 
-  void deleteUser(Integer id);
-  
-  UserVO convertToVO(User user);
+    Optional<UserVO> getUserVOByUsername(String username);
+
+    Optional<UserVO> getUserVOByEmail(String email);
+
+    Optional<UserVO> getUserVOByWechatOpenId(String wechatOpenId);
+
+    UserVO createUserAndReturnVO(UserRequest request);
+
+    Optional<UserVO> updateUserAndReturnVO(Integer id, UserRequest request);
+
+    // 微信登录相关方法
+    UserVO wechatLogin(WechatLoginRequest request);
+
+    Optional<UserVO> updateWechatUserInfo(String wechatOpenId, UserRequest request);
+
+    User createUser(User user);
+
+    User updateUser(User user);
+
+    void deleteUser(Integer id);
+
+    UserVO convertToVO(User user);
 }

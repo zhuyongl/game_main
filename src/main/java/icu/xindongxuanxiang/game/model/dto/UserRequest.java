@@ -5,17 +5,17 @@ import lombok.Data;
 @Data
 public class UserRequest {
 
-  private String username;
+    private String username;
 
-  private String email;
+    private String email;
 
-  private String password;
+    private String password;
 
-  private String nickname;
+    private String nickname;
 
-  private String avatar;
+    private String avatar;
 
-  private String userType;
+    private String userType;
 
-  private String wechatOpenId;
+    private String wechatOpenId;
 }

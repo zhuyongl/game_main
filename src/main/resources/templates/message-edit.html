@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="content" lang="zh">
+<body>
+<div>
+    <!-- 页面标题 -->
+    <div class="d-flex align-items-center mb-4">
+        <div class="me-3">
+            <i class="bi bi-pencil-square text-primary" style="font-size: 2rem; color: #ff6b81 !important;"></i>
+        </div>
+        <div>
+            <h2 class="mb-1">编辑留言</h2>
+            <p class="text-muted mb-0">修改留言内容和审核状态</p>
+        </div>
+    </div>
+
+    <!-- 用户信息卡片 -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-3"
+                     style="width: 48px; height: 48px;">
+                    <i class="bi bi-person-fill text-muted" style="font-size: 1.5rem;"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <label class="form-label fw-semibold mb-1">
+                        <i class="bi bi-person me-1"></i>留言用户
+                    </label>
+                    <p class="form-control-plaintext mb-0 fs-5"
+                       th:text="${message.user != null ? message.user.nickname : '用户' + message.userId}"></p>
+                </div>
+                <div class="text-muted">
+                    <small>
+                        <i class="bi bi-hash me-1"></i>
+                        留言ID: <span th:text="${message.id}" class="fw-semibold"></span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑表单 -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <form th:action="@{'/admin/messages/' + ${message.id} + '/edit'}" method="post">
+                <!-- 留言内容 -->
+                <div class="mb-4">
+                    <label for="content" class="form-label fw-semibold">
+                        <i class="bi bi-chat-text me-1"></i>留言内容
+                        <small class="text-muted ms-2">(支持修改原始内容)</small>
+                    </label>
+                    <textarea id="content" name="content" class="form-control form-control-lg" rows="6"
+                              th:text="${message.content}"
+                              placeholder="请输入留言内容..."></textarea>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        修改后的内容将直接显示给用户，请谨慎编辑
+                    </div>
+                </div>
+
+                <!-- 审核状态 -->
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-flag me-1"></i>审核状态
+                        <small class="text-muted ms-2">(设置留言的显示状态)</small>
+                    </label>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-check card-check">
+                                <input class="form-check-input" type="radio" name="reviewStatus" id="statusPending"
+                                       value="PENDING" th:checked="${message.reviewStatus == 'PENDING'}">
+                                <label class="form-check-label card-check-label" for="statusPending">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-clock text-warning me-2"></i>
+                                        <div>
+                                            <div class="fw-medium">待审核</div>
+                                            <small class="text-muted">留言暂不公开显示</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check card-check">
+                                <input class="form-check-input" type="radio" name="reviewStatus" id="statusApproved"
+                                       value="APPROVED" th:checked="${message.reviewStatus == 'APPROVED'}">
+                                <label class="form-check-label card-check-label" for="statusApproved">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-check-circle text-success me-2"></i>
+                                        <div>
+                                            <div class="fw-medium">已通过</div>
+                                            <small class="text-muted">留言公开显示</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check card-check">
+                                <input class="form-check-input" type="radio" name="reviewStatus" id="statusRejected"
+                                       value="REJECTED" th:checked="${message.reviewStatus == 'REJECTED'}">
+                                <label class="form-check-label card-check-label" for="statusRejected">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-x-circle text-danger me-2"></i>
+                                        <div>
+                                            <div class="fw-medium">未通过</div>
+                                            <small class="text-muted">留言被拒绝</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 操作按钮 -->
+                <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                    <div class="text-muted small">
+                        <i class="bi bi-clock-history me-1"></i>
+                        创建时间: <span th:text="${#temporals.format(message.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                    </div>
+                    <div>
+                        <a th:href="@{/admin/messages}" class="btn btn-outline-secondary btn-lg me-2">
+                            <i class="bi bi-arrow-left me-2"></i>返回列表
+                        </a>
+                        <button type="submit" class="btn btn-lg"
+                                style="background-color: #ff6b81; color: white; border: none;">
+                            <i class="bi bi-check-lg me-2"></i>保存修改
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 操作提示 -->
+    <div class="alert alert-light border-0 mt-4" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="bi bi-lightbulb text-warning me-3" style="font-size: 1.5rem;"></i>
+            <div>
+                <strong class="text-dark">编辑提示</strong>
+                <p class="text-muted mb-0 mt-1">
+                    修改留言内容时请保持友善和积极的语调，审核状态决定了留言是否在前台显示。
+                    "已通过"的留言将对所有用户可见，"待审核"和"未通过"的留言仅管理员可见。
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-check {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+
+    .card-check:hover {
+        border-color: #ff6b81;
+        background-color: rgba(255, 107, 129, 0.05);
+    }
+
+    .card-check input[type="radio"]:checked + .card-check-label {
+        color: #ff6b81;
+    }
+
+    .card-check input[type="radio"]:checked + .card-check-label .card-check {
+        border-color: #ff6b81;
+        background-color: rgba(255, 107, 129, 0.1);
+    }
+
+    .form-check-input:checked {
+        background-color: #ff6b81;
+        border-color: #ff6b81;
+    }
+
+    .form-control-lg {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .form-control-lg:focus {
+        border-color: #ff6b81;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 129, 0.25);
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .btn-lg {
+        border-radius: 8px;
+        padding: 0.75rem 2rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-lg:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .alert-light {
+        border-radius: 12px;
+        background-color: #f8f9fa;
+    }
+</style>
+</body>
+</html>

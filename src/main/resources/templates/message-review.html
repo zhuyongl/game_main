@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="content" lang="zh">
+<body>
+<div>
+    <h2>留言审核</h2>
+    <table class="table table-bordered mt-3">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>用户</th>
+            <th>内容</th>
+            <th>创建时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="msg : ${messages}">
+            <td th:text="${msg.id}"></td>
+            <td th:text="${msg.user != null ? msg.user.nickname : msg.userId}"></td>
+            <td th:text="${msg.content}"></td>
+            <td th:text="${#temporals.format(msg.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+            <td>
+                <form th:action="@{'/admin/messages/review/' + ${msg.id} + '/approve'}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-success">通过</button>
+                </form>
+                <form th:action="@{'/admin/messages/review/' + ${msg.id} + '/reject'}" method="post"
+                      class="d-inline ms-1">
+                    <button type="submit" class="btn btn-sm btn-danger">拒绝</button>
+                </form>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(messages)}">
+            <td colspan="5" class="text-center">暂无待审核留言</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

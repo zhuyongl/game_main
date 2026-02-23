@@ -1,24 +1,25 @@
 package icu.xindongxuanxiang.game.model.vo;
 
 import lombok.Data;
+
 import java.time.LocalDateTime;
 
 @Data
 public class UserVO {
 
-  private Integer id;
+    private Integer id;
 
-  private String username;
+    private String username;
 
-  private String email;
+    private String email;
 
-  private String nickname;
+    private String nickname;
 
-  private String avatar;
+    private String avatar;
 
-  private String userType;
+    private String userType;
 
-  private LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
-  private LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 }

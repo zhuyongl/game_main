@@ -12,36 +12,46 @@ import java.util.List;
 
 public interface MessageService {
 
-  Optional<Message> getMessage(Integer id);
+    Optional<Message> getMessage(Integer id);
 
-  List<Message> getAllMessages();
+    Optional<Message> getMessageRaw(Integer id);
 
-  PageInfo<Message> getMessagesWithPagination(Integer page, Integer size);
-  
-  PageInfo<MessageVO> getMessagesVOWithPagination(Integer page, Integer size);
+    List<Message> getAllMessages();
 
-  List<Message> getMessagesByUserId(Integer userId);
+    List<Message> getAllMessagesForAdmin();
 
-  PageInfo<Message> getMessagesByUserIdWithPagination(Integer userId, Integer page, Integer size);
-  
-  PageInfo<MessageVO> getMessagesByUserIdVOWithPagination(Integer userId, Integer page, Integer size);
+    PageInfo<Message> getMessagesWithPagination(Integer page, Integer size);
 
-  Message createMessage(Message message);
+    PageInfo<MessageVO> getMessagesVOWithPagination(Integer page, Integer size);
 
-  Message updateMessage(Message message);
+    List<Message> getMessagesByUserId(Integer userId);
 
-  void deleteMessage(Integer id);
+    PageInfo<Message> getMessagesByUserIdWithPagination(Integer userId, Integer page, Integer size);
 
-  void deleteMessagesByUserId(Integer userId);
-  
-  // 新增的VO相关方法
-  Optional<MessageVO> getMessageVOById(Integer id);
-  
-  MessageVO createMessageAndReturnVO(MessageRequest request);
-  
-  Optional<MessageVO> updateMessageAndReturnVO(Integer id, MessageRequest request);
-  
-  MessageVO convertToVO(Message message);
-  
-  MessageVO convertToVO(Message message, User user);
+    PageInfo<MessageVO> getMessagesByUserIdVOWithPagination(Integer userId, Integer page, Integer size);
+
+    List<Message> getMessagesByReviewStatus(String reviewStatus);
+
+    Message createMessage(Message message);
+
+    Message updateMessage(Message message);
+
+    void deleteMessage(Integer id);
+
+    void deleteMessagesByUserId(Integer userId);
+
+    // 新增的VO相关方法
+    Optional<MessageVO> getMessageVOById(Integer id);
+
+    MessageVO createMessageAndReturnVO(MessageRequest request);
+
+    Optional<MessageVO> updateMessageAndReturnVO(Integer id, MessageRequest request);
+
+    void updateMessageContentAndStatus(Integer id, String content, String reviewStatus);
+
+    void updateMessageReviewStatus(Integer id, String reviewStatus);
+
+    MessageVO convertToVO(Message message);
+
+    MessageVO convertToVO(Message message, User user);
 }

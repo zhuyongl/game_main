@@ -5,11 +5,13 @@ server:
 
 spring:
   profiles:
-    active: prod
-  mvc:
-    view:
-      suffix: .html
-      prefix: /
+    active: test
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML5
+    encoding: UTF-8
+    cache: false
 
 mybatis:
   mapper-locations: classpath*:mapper/*Mapper.xml

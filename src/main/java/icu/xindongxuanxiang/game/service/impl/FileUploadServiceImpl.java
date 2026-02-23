@@ -46,16 +46,16 @@ public class FileUploadServiceImpl implements FileUploadService {
             HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
             ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
-            
+
             // 解析响应
             ObjectMapper objectMapper = new ObjectMapper();
             UploadFileResponse uploadFileResponse = objectMapper.readValue(response.getBody(), UploadFileResponse.class);
-            
+
             if (uploadFileResponse.getErrcode() != null && uploadFileResponse.getErrcode() != 0) {
                 logger.error("获取上传链接失败: errcode={}, errmsg={}", uploadFileResponse.getErrcode(), uploadFileResponse.getErrmsg());
                 throw new RuntimeException("获取上传链接失败: " + uploadFileResponse.getErrmsg());
             }
-            
+
             uploadFileResponse.setKey(path);
             return uploadFileResponse;
         } catch (Exception e) {
@@ -68,14 +68,14 @@ public class FileUploadServiceImpl implements FileUploadService {
     public String uploadFile(MultipartFile file, String path) throws IOException {
         // 1. 获取上传链接
         UploadFileResponse uploadFileResponse = getUploadUrl(path);
-        
+
         // 2. 上传文件
         RestTemplate restTemplate = new RestTemplate();
-        
+
         // 构造multipart/form-data请求
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        
+
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("key", uploadFileResponse.getKey());
         body.add("Signature", uploadFileResponse.getAuthorization());
@@ -87,11 +87,11 @@ public class FileUploadServiceImpl implements FileUploadService {
                 return file.getOriginalFilename();
             }
         });
-        
+
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
-        
+
         ResponseEntity<String> response = restTemplate.postForEntity(uploadFileResponse.getUrl(), requestEntity, String.class);
-        
+
         if (response.getStatusCode() == HttpStatus.OK) {
             return uploadFileResponse.getFileId();
         } else {
@@ -107,13 +107,13 @@ public class FileUploadServiceImpl implements FileUploadService {
         try {
             RestTemplate restTemplate = new RestTemplate();
             ResponseEntity<String> response = restTemplate.getForEntity(accessTokenUrl, String.class);
-            
+
             // 解析响应获取access_token
             ObjectMapper objectMapper = new ObjectMapper();
             // 这里需要根据实际的token获取接口响应格式进行解析
             // 假设返回格式为 {"access_token": "xxx", "expires_in": 7200}
             // 实际使用时需要根据具体的接口文档进行调整
-            
+
             // 临时返回固定值，实际应该从配置或接口获取
             return "your_access_token";
         } catch (Exception e) {

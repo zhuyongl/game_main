@@ -33,11 +33,11 @@ public class CommonController {
                                   @RequestParam("path") String path) {
         try {
             logger.info("文件上传请求: filename={}, path={}", file.getOriginalFilename(), path);
-            
+
             if (file.isEmpty()) {
                 return ApiResponse.error("文件不能为空");
             }
-            
+
             String fileId = fileUploadService.uploadFile(file, path);
             return ApiResponse.ok(fileId);
         } catch (IOException e) {

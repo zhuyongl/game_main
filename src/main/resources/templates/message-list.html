@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="content" lang="zh">
+<body>
+<div>
+    <!-- 页面标题 -->
+    <div class="d-flex align-items-center mb-4">
+        <div class="me-3">
+            <i class="bi bi-chat-dots-fill text-primary" style="font-size: 2rem; color: #ff6b81 !important;"></i>
+        </div>
+        <div>
+            <h2 class="mb-1">留言管理</h2>
+            <p class="text-muted mb-0">管理和审核所有用户留言</p>
+        </div>
+    </div>
+
+    <!-- 筛选表单 -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body">
+            <form class="row g-3 align-items-end" method="get" th:action="@{/admin/messages}">
+                <div class="col-md-3">
+                    <label for="status" class="form-label fw-semibold">
+                        <i class="bi bi-funnel me-1"></i>审核状态
+                    </label>
+                    <select class="form-select form-select-lg" id="status" name="status">
+                        <option th:value="ALL" th:selected="${status == 'ALL'}">
+                            <i class="bi bi-grid-3x3-gap me-1"></i>全部留言
+                        </option>
+                        <option th:value="PENDING" th:selected="${status == 'PENDING'}">
+                            <i class="bi bi-clock me-1"></i>待审核
+                        </option>
+                        <option th:value="APPROVED" th:selected="${status == 'APPROVED'}">
+                            <i class="bi bi-check-circle me-1"></i>已通过
+                        </option>
+                        <option th:value="REJECTED" th:selected="${status == 'REJECTED'}">
+                            <i class="bi bi-x-circle me-1"></i>未通过
+                        </option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <button type="submit" class="btn btn-lg"
+                            style="background-color: #ff6b81; color: white; border: none;">
+                        <i class="bi bi-search me-2"></i>筛选留言
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 留言列表 -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="border-0" style="width: 80px;">
+                            <i class="bi bi-hash me-1"></i>ID
+                        </th>
+                        <th class="border-0" style="width: 150px;">
+                            <i class="bi bi-person me-1"></i>用户
+                        </th>
+                        <th class="border-0">留言内容</th>
+                        <th class="border-0" style="width: 120px;">
+                            <i class="bi bi-flag me-1"></i>状态
+                        </th>
+                        <th class="border-0" style="width: 180px;">
+                            <i class="bi bi-clock-history me-1"></i>创建时间
+                        </th>
+                        <th class="border-0 text-center" style="width: 200px;">
+                            <i class="bi bi-gear me-1"></i>操作
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="msg : ${messages}" class="align-middle">
+                        <td class="fw-semibold text-muted" th:text="${msg.id}"></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2"
+                                     style="width: 32px; height: 32px;">
+                                    <i class="bi bi-person-fill text-muted"></i>
+                                </div>
+                                <span class="fw-medium"
+                                      th:text="${msg.user != null ? msg.user.nickname : '用户' + msg.userId}"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="message-content" th:text="${msg.content}"></div>
+                        </td>
+                        <td>
+              <span th:if="${msg.reviewStatus == 'PENDING'}"
+                    class="badge bg-warning text-dark">
+                <i class="bi bi-clock me-1"></i>待审核
+              </span>
+                            <span th:if="${msg.reviewStatus == 'APPROVED'}"
+                                  class="badge bg-success">
+                <i class="bi bi-check-circle me-1"></i>已通过
+              </span>
+                            <span th:if="${msg.reviewStatus == 'REJECTED'}"
+                                  class="badge bg-danger">
+                <i class="bi bi-x-circle me-1"></i>未通过
+              </span>
+                        </td>
+                        <td class="text-muted small" th:text="${#temporals.format(msg.createdAt, 'MM-dd HH:mm')}"></td>
+                        <td class="text-center">
+                            <div class="btn-group" role="group">
+                                <!-- 快速审核按钮 - 仅待审核状态显示 -->
+                                <button th:if="${msg.reviewStatus == 'PENDING'}"
+                                        type="button"
+                                        class="btn btn-sm btn-outline-warning"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#reviewModal"
+                                        th:attr="data-id=${msg.id},
+                                            data-content=${msg.content},
+                                            data-user=${msg.user != null ? msg.user.nickname : '用户' + msg.userId}">
+                                    <i class="bi bi-eye-fill me-1"></i>审核
+                                </button>
+
+                                <a th:href="@{'/admin/messages/' + ${msg.id} + '/edit'}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil-square me-1"></i>编辑
+                                </a>
+                                <form th:action="@{'/admin/messages/' + ${msg.id} + '/delete'}"
+                                      method="post" class="d-inline"
+                                      onsubmit="return confirm('确定要删除这条留言吗？此操作不可恢复！')">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash me-1"></i>删除
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(messages)}">
+                        <td colspan="6" class="text-center py-5">
+                            <div class="text-muted">
+                                <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                                <p class="mt-3 mb-0">暂无留言数据</p>
+                                <small>当前筛选条件下没有找到相关留言</small>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分页导航 -->
+    <div class="d-flex justify-content-between align-items-center mt-4" th:if="${totalPages > 1}">
+        <div class="text-muted small">
+            <i class="bi bi-info-circle me-1"></i>
+            第 <span th:text="${currentPage}" class="fw-semibold text-primary"></span> 页，
+            共 <span th:text="${totalPages}" class="fw-semibold text-primary"></span> 页，
+            总计 <span th:text="${totalItems}" class="fw-semibold text-primary"></span> 条留言
+        </div>
+
+        <nav aria-label="留言分页">
+            <ul class="pagination mb-0">
+                <!-- 上一页 -->
+                <li class="page-item" th:class="${currentPage == 1} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/admin/messages(page=${currentPage - 1}, status=${status})}"
+                       th:tabindex="${currentPage == 1} ? '-1' : null"
+                       th:aria-disabled="${currentPage == 1} ? 'true' : 'false'">
+                        <i class="bi bi-chevron-left"></i>
+                        上一页
+                    </a>
+                </li>
+
+                <!-- 页码 -->
+                <li th:each="i : ${#numbers.sequence(1, totalPages)}"
+                    class="page-item" th:class="${i == currentPage} ? 'active' : ''">
+                    <a class="page-link" th:href="@{/admin/messages(page=${i}, status=${status})}"
+                       th:text="${i}">1</a>
+                </li>
+
+                <!-- 下一页 -->
+                <li class="page-item" th:class="${currentPage == totalPages} ? 'disabled' : ''">
+                    <a class="page-link" th:href="@{/admin/messages(page=${currentPage + 1}, status=${status})}"
+                       th:tabindex="${currentPage == totalPages} ? '-1' : null"
+                       th:aria-disabled="${currentPage == totalPages} ? 'true' : 'false'">
+                        下一页
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="row mt-4" th:if="${!#lists.isEmpty(messages)}">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center text-muted small">
+        <span>
+          <i class="bi bi-info-circle me-1"></i>
+          当前页显示 <span th:text="${#lists.size(messages)}" class="fw-semibold text-primary"></span> 条留言
+        </span>
+                <span>
+          <i class="bi bi-heart-fill me-1" style="color: #ff6b81;"></i>
+          心动选项管理后台
+        </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .message-content {
+        max-width: 300px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(255, 107, 129, 0.05);
+    }
+
+    .badge {
+        font-size: 0.75rem;
+        padding: 0.5em 0.8em;
+    }
+
+    .btn-group .btn {
+        border-radius: 6px;
+        margin: 0 2px;
+    }
+
+    .btn {
+        pointer-events: auto;
+        cursor: pointer;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .form-select-lg {
+        border-radius: 8px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .form-select-lg:focus {
+        border-color: #ff6b81;
+        box-shadow: 0 0 0 0.2rem rgba(255, 107, 129, 0.25);
+    }
+
+    .pagination .page-link {
+        color: #ff6b81;
+        border: 1px solid #dee2e6;
+        padding: 0.5rem 0.75rem;
+    }
+
+    .pagination .page-link:hover {
+        color: #fff;
+        background-color: #ff6b81;
+        border-color: #ff6b81;
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #ff6b81;
+        border-color: #ff6b81;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        color: #6c757d;
+        background-color: #fff;
+        border-color: #dee2e6;
+    }
+</style>
+</body>
+</html>

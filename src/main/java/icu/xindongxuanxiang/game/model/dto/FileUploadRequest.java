@@ -6,6 +6,6 @@ import lombok.Data;
 public class FileUploadRequest {
 
     private String path;
-    
+
     private String fileName;
 }
