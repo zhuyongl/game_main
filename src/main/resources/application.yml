@@ -1,11 +1,9 @@
 server:
   port: 8888
-  servlet:
-    context-path: /api
 
 spring:
   profiles:
-    active: prod
+    active: test
   thymeleaf:
     prefix: classpath:/templates/
     suffix: .html

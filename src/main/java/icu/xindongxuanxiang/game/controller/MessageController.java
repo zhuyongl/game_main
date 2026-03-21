@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 留言控制器
  */
 @RestController
-@RequestMapping("/messages")
+@RequestMapping("/api/messages")
 public class MessageController {
 
     final MessageService messageService;

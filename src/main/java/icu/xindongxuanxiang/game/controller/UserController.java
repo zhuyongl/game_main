@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 用户控制器
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     final UserService userService;

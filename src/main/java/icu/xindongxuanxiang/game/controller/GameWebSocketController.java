@@ -10,7 +10,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 @RestController
-@ServerEndpoint("/ws/game/{userId}")
+@ServerEndpoint("/api/ws/game/{userId}")
 public class GameWebSocketController {
 
 

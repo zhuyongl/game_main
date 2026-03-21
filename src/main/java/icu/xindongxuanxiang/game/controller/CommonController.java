@@ -14,7 +14,7 @@ import java.io.IOException;
  * 通用控制器
  */
 @RestController
-@RequestMapping("/common")
+@RequestMapping("/api/common")
 public class CommonController {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonController.class);
