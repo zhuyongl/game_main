@@ -1,5 +1,6 @@
 package icu.xindongxuanxiang.game.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import icu.xindongxuanxiang.game.exception.UserNotFoundException;
@@ -10,6 +11,7 @@ import icu.xindongxuanxiang.game.model.dto.WechatLoginRequest;
 import icu.xindongxuanxiang.game.model.entity.User;
 import icu.xindongxuanxiang.game.model.vo.UserVO;
 import icu.xindongxuanxiang.game.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -147,13 +150,23 @@ public class UserServiceImpl implements UserService {
         String wechatAuthUrl = "https://api.weixin.qq.com/sns/jscode2session?appid={appid}&secret={secret}&js_code={code}&grant_type=authorization_code";
 
         RestTemplate restTemplate = new RestTemplate();
-        WechatAuthResponse authResponse = restTemplate.getForObject(
+        String responseBody = restTemplate.getForObject(
                 wechatAuthUrl,
-                WechatAuthResponse.class,
+                String.class,
                 wechatAppId,
                 wechatSecret,
                 request.getCode()
         );
+
+        log.info("微信接口返回原始内容: {}", responseBody);
+
+        WechatAuthResponse authResponse = null;
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            authResponse = objectMapper.readValue(responseBody, WechatAuthResponse.class);
+        } catch (Exception e) {
+            log.error("微信登录失败：{}", responseBody);
+        }
 
         if (authResponse == null || authResponse.getErrcode() != null) {
             throw new RuntimeException("微信登录失败: " + (authResponse != null ? authResponse.getErrmsg() : "未知错误"));
@@ -173,8 +186,11 @@ public class UserServiceImpl implements UserService {
         } else {
             // 用户不存在，创建新用户
             User newUser = new User();
+            newUser.setUsername("wx_" + request.getCode().substring(0, 4));
             newUser.setWechatOpenId(openid);
             newUser.setNickname(request.getNickname());
+            newUser.setPassword("123456");
+            newUser.setEmail(newUser.getUsername() + "@wx.com");
             newUser.setAvatar(request.getAvatar());
             newUser.setUserType("wechat");
             userMapper.insertUser(newUser);

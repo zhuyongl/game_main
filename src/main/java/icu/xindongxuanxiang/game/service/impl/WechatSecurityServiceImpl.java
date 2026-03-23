@@ -21,7 +21,7 @@ public class WechatSecurityServiceImpl implements WechatSecurityService {
 
     private static final Logger logger = LoggerFactory.getLogger(WechatSecurityServiceImpl.class);
 
-    private static final String MSG_SEC_CHECK_URL = "https://api.weixin.qq.com/wxa/gamesec/msgseccheck?access_token=";
+    private static final String MSG_SEC_CHECK_URL = "https://api.weixin.qq.com/wxa/game/content_spam/msg_sec_check?access_token=";
 
     @Value("${wechat.cloud.access-token-url}")
     private String accessTokenUrl;

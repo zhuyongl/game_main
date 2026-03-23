@@ -1,5 +1,6 @@
 package icu.xindongxuanxiang.game.model.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -17,16 +18,19 @@ public class WechatMsgSecCheckResponse {
 
     private Result result;
 
+    private List<Detail> detail;
+
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Result {
         private String suggest;
         private Integer label;
         @JsonProperty("replaced_content")
         private String replacedContent;
-        private List<Detail> detail;
     }
 
     @Data
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Detail {
         private String strategy;
         private Integer errcode;
