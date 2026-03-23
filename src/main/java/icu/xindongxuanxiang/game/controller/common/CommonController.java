@@ -1,4 +1,4 @@
-package icu.xindongxuanxiang.game.controller;
+package icu.xindongxuanxiang.game.controller.common;
 
 import icu.xindongxuanxiang.game.common.ApiResponse;
 import icu.xindongxuanxiang.game.service.FileUploadService;
@@ -14,7 +14,7 @@ import java.io.IOException;
  * 通用控制器
  */
 @RestController
-@RequestMapping("/api/common")
+@RequestMapping("/common")
 public class CommonController {
 
     private static final Logger logger = LoggerFactory.getLogger(CommonController.class);

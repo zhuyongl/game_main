@@ -1,4 +1,4 @@
-package icu.xindongxuanxiang.game.controller;
+package icu.xindongxuanxiang.game.controller.common;
 
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,7 +10,7 @@ import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 
 @RestController
-@ServerEndpoint("/api/ws/game/{userId}")
+@ServerEndpoint("/ws/game/{userId}")
 public class GameWebSocketController {
 
 

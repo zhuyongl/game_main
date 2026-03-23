@@ -14,6 +14,12 @@ public enum ErrorCode {
     // 留言相关错误
     MESSAGE_NOT_FOUND(2001, "留言不存在"),
     MESSAGE_CONTENT_EMPTY(2002, "留言内容不能为空"),
+    MESSAGE_CONTENT_RISKY(2003, "留言内容包含违规信息"),
+
+    // 微信内容安全相关错误
+    WECHAT_SEC_CHECK_FAILED(4001, "微信内容安全检测失败"),
+    WECHAT_SEC_CHECK_RISKY(4002, "内容包含违规信息"),
+    WECHAT_ACCESS_TOKEN_ERROR(4003, "获取微信access_token失败"),
 
     // 参数验证错误
     PARAMETER_INVALID(3001, "参数无效"),

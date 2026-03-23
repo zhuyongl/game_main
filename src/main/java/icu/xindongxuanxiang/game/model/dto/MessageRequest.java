@@ -8,4 +8,6 @@ public class MessageRequest {
     private Integer userId;
 
     private String content;
+
+    private String platform;
 }

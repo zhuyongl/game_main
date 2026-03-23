@@ -1,21 +1,21 @@
-package icu.xindongxuanxiang.game.controller;
+package icu.xindongxuanxiang.game.controller.admin;
 
-import icu.xindongxuanxiang.game.model.entity.User;
-import icu.xindongxuanxiang.game.service.UserService;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.util.Optional;
+import icu.xindongxuanxiang.game.model.entity.User;
+import icu.xindongxuanxiang.game.service.UserService;
 
 @Controller
-@RequestMapping("/admin")
 public class AdminAuthController {
 
     final UserService userService;
@@ -31,9 +31,9 @@ public class AdminAuthController {
 
     @PostMapping("/login")
     public String doLogin(@RequestParam("username") String username,
-                          @RequestParam("password") String password,
-                          Model model,
-                          HttpServletRequest request) {
+            @RequestParam("password") String password,
+            Model model,
+            HttpServletRequest request) {
         Optional<User> userOptional = userService.getUserByUsername(username);
         if (!userOptional.isPresent() || !password.equals(userOptional.get().getPassword())) {
             model.addAttribute("error", "用户名或密码错误");
@@ -54,4 +54,3 @@ public class AdminAuthController {
         return "redirect:/admin/login";
     }
 }
-

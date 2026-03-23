@@ -1,29 +1,33 @@
-package icu.xindongxuanxiang.game.controller;
-
-import icu.xindongxuanxiang.game.common.ApiResponse;
-import icu.xindongxuanxiang.game.exception.MessageNotFoundException;
-import icu.xindongxuanxiang.game.model.entity.Message;
-import icu.xindongxuanxiang.game.model.vo.MessageVO;
-import icu.xindongxuanxiang.game.common.ApiResponse;
-import icu.xindongxuanxiang.game.model.vo.UserVO;
-import icu.xindongxuanxiang.game.service.MessageService;
-import icu.xindongxuanxiang.game.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+package icu.xindongxuanxiang.game.controller.admin;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import com.github.pagehelper.PageInfo;
 
+import icu.xindongxuanxiang.game.common.ApiResponse;
+import icu.xindongxuanxiang.game.exception.MessageNotFoundException;
+import icu.xindongxuanxiang.game.model.entity.Message;
+import icu.xindongxuanxiang.game.model.vo.MessageVO;
+import icu.xindongxuanxiang.game.model.vo.UserVO;
+import icu.xindongxuanxiang.game.service.MessageService;
+import icu.xindongxuanxiang.game.service.UserService;
+
 @Controller
-@RequestMapping("/admin/messages")
+@RequestMapping("/messages")
 public class MessageReviewController {
 
     final MessageService messageService;
@@ -36,9 +40,9 @@ public class MessageReviewController {
 
     @GetMapping
     public String listAll(@RequestParam(value = "status", required = false) String status,
-                          @RequestParam(value = "page", defaultValue = "1") int page,
-                          @RequestParam(value = "size", defaultValue = "10") int size,
-                          Model model) {
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Model model) {
         PageInfo<Message> messagePage;
         if (status == null || status.isEmpty() || "ALL".equalsIgnoreCase(status)) {
             messagePage = messageService.getMessagesWithPagination(page, size);
@@ -109,18 +113,18 @@ public class MessageReviewController {
 
     @PostMapping("/{id}/edit")
     public String update(@PathVariable Integer id,
-                         @RequestParam("content") String content,
-                         @RequestParam("reviewStatus") String reviewStatus,
-                         @RequestParam(value = "top", required = false) Boolean top) {
+            @RequestParam("content") String content,
+            @RequestParam("reviewStatus") String reviewStatus,
+            @RequestParam(value = "top", required = false) Boolean top) {
         Message message = messageService.getMessageRaw(id)
                 .orElseThrow(() -> new MessageNotFoundException("留言ID: " + id + " 不存在"));
-        
+
         message.setContent(content);
         message.setReviewStatus(reviewStatus);
         if (top != null) {
             message.setTop(top);
         }
-        
+
         messageService.updateMessage(message);
         return "redirect:/admin/messages";
     }
@@ -128,8 +132,8 @@ public class MessageReviewController {
     @PostMapping("/{id}/review")
     @ResponseBody
     public ApiResponse review(@PathVariable Integer id,
-                              @RequestParam("content") String content,
-                              @RequestParam("reviewStatus") String reviewStatus) {
+            @RequestParam("content") String content,
+            @RequestParam("reviewStatus") String reviewStatus) {
         try {
             messageService.updateMessageContentAndStatus(id, content, reviewStatus);
             return ApiResponse.ok("审核操作成功");
@@ -159,7 +163,7 @@ public class MessageReviewController {
     @PostMapping("/{id}/toggle-top")
     @ResponseBody
     public ApiResponse toggleTop(@PathVariable Integer id,
-                                 @RequestBody Map<String, Object> requestBody) {
+            @RequestBody Map<String, Object> requestBody) {
         try {
             Boolean top = (Boolean) requestBody.get("top");
             messageService.updateMessageTopStatus(id, top);

@@ -2,16 +2,22 @@ package icu.xindongxuanxiang.game.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
+import icu.xindongxuanxiang.game.constants.PlatFormEnum;
+import icu.xindongxuanxiang.game.exception.BusinessException;
+import icu.xindongxuanxiang.game.exception.ErrorCode;
 import icu.xindongxuanxiang.game.exception.MessageNotFoundException;
 import icu.xindongxuanxiang.game.exception.UserNotFoundException;
 import icu.xindongxuanxiang.game.mapper.MessageMapper;
 import icu.xindongxuanxiang.game.mapper.UserMapper;
 import icu.xindongxuanxiang.game.model.dto.MessageRequest;
+import icu.xindongxuanxiang.game.model.dto.WechatMsgSecCheckResponse;
 import icu.xindongxuanxiang.game.model.entity.Message;
 import icu.xindongxuanxiang.game.model.entity.User;
 import icu.xindongxuanxiang.game.model.vo.MessageVO;
 import icu.xindongxuanxiang.game.model.vo.UserVO;
 import icu.xindongxuanxiang.game.service.MessageService;
+import icu.xindongxuanxiang.game.service.WechatSecurityService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,10 +31,12 @@ public class MessageServiceImpl implements MessageService {
 
     final MessageMapper messageMapper;
     final UserMapper userMapper;
+    final WechatSecurityService wechatSecurityService;
 
-    public MessageServiceImpl(@Autowired MessageMapper messageMapper, @Autowired UserMapper userMapper) {
+    public MessageServiceImpl(@Autowired MessageMapper messageMapper, @Autowired UserMapper userMapper, @Autowired WechatSecurityService wechatSecurityService) {
         this.messageMapper = messageMapper;
         this.userMapper = userMapper;
+        this.wechatSecurityService = wechatSecurityService;
     }
 
     @Override
@@ -132,10 +140,23 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public MessageVO createMessageAndReturnVO(MessageRequest request) {
-        // 检查用户是否存在
         User user = userMapper.getUser(request.getUserId());
         if (user == null) {
             throw new UserNotFoundException("用户ID: " + request.getUserId() + " 不存在");
+        }
+        if (PlatFormEnum.WECHAT.getKey().equals(request.getPlatform())) {
+            if (user.getWechatOpenId() == null || user.getWechatOpenId().isEmpty()) {
+                throw new BusinessException(ErrorCode.WECHAT_SEC_CHECK_FAILED, "用户微信OpenId不存在");
+            }
+            WechatMsgSecCheckResponse secCheckResponse = wechatSecurityService.checkMessageContent(
+                    user.getWechatOpenId(),
+                    request.getContent(),
+                    5,
+                    user.getNickname()
+            );
+            if (secCheckResponse.getResult() != null && "risky".equals(secCheckResponse.getResult().getSuggest())) {
+                throw new BusinessException(ErrorCode.MESSAGE_CONTENT_RISKY);
+            }
         }
 
         Message message = new Message();

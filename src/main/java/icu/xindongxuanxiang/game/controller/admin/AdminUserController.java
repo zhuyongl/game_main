@@ -1,10 +1,7 @@
-package icu.xindongxuanxiang.game.controller;
+package icu.xindongxuanxiang.game.controller.admin;
 
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import icu.xindongxuanxiang.game.model.dto.PageRequest;
-import icu.xindongxuanxiang.game.model.vo.UserVO;
-import icu.xindongxuanxiang.game.service.UserService;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -12,10 +9,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
+import com.github.pagehelper.PageInfo;
+
+import icu.xindongxuanxiang.game.model.vo.UserVO;
+import icu.xindongxuanxiang.game.service.UserService;
 
 @Controller
-@RequestMapping("/admin/users")
+@RequestMapping("/users")
 public class AdminUserController {
 
     final UserService userService;
@@ -26,8 +26,8 @@ public class AdminUserController {
 
     @GetMapping
     public String listUsers(@RequestParam(value = "page", defaultValue = "1") int page,
-                           @RequestParam(value = "size", defaultValue = "10") int size,
-                           Model model) {
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            Model model) {
         PageInfo<UserVO> pageInfo = userService.getUsersVOWithPagination(page, size);
         List<UserVO> users = pageInfo.getList();
         model.addAttribute("users", users);
@@ -40,4 +40,3 @@ public class AdminUserController {
         return "admin-layout";
     }
 }
-

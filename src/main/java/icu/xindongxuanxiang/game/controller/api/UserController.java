@@ -1,4 +1,4 @@
-package icu.xindongxuanxiang.game.controller;
+package icu.xindongxuanxiang.game.controller.api;
 
 import com.github.pagehelper.PageInfo;
 import icu.xindongxuanxiang.game.common.ApiResponse;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 用户控制器
  */
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
     final UserService userService;

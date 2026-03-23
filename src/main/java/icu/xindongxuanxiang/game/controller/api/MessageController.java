@@ -1,4 +1,4 @@
-package icu.xindongxuanxiang.game.controller;
+package icu.xindongxuanxiang.game.controller.api;
 
 import com.github.pagehelper.PageInfo;
 import icu.xindongxuanxiang.game.common.ApiResponse;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
  * 留言控制器
  */
 @RestController
-@RequestMapping("/api/messages")
+@RequestMapping("/messages")
 public class MessageController {
 
     final MessageService messageService;

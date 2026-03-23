@@ -1,5 +1,7 @@
 server:
   port: 8888
+  servlet:
+    context-path: /game-main-server
 
 spring:
   profiles:
@@ -10,8 +12,6 @@ spring:
     mode: HTML5
     encoding: UTF-8
     cache: false
-  mvc:
-    static-path-pattern: /admin/**
 
 mybatis:
   mapper-locations: classpath*:mapper/*Mapper.xml
