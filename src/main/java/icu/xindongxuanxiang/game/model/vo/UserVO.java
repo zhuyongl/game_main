@@ -15,6 +15,8 @@ public class UserVO {
 
     private String nickname;
 
+    private String wechatOpenId;
+
     private String avatar;
 
     private String userType;
